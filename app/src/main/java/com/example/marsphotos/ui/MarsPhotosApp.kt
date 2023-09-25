@@ -37,6 +37,7 @@ import com.example.marsphotos.R
 import com.example.marsphotos.ui.screens.HomeScreen
 import com.example.marsphotos.ui.screens.MarsViewModel
 
+//The only task for this activity is to load ViewModel and display the MarsPhotosApp composable.
 @Composable
 fun MarsPhotosApp() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -50,8 +51,7 @@ fun MarsPhotosApp() {
                 .padding(it)
         ) {
             val marsViewModel: MarsViewModel = viewModel()
-            HomeScreen(
-                marsUiState = marsViewModel.marsUiState)
+            HomeScreen(marsUiState = marsViewModel.marsUiState)
         }
     }
 }

@@ -26,12 +26,9 @@ import com.example.marsphotos.R
 import com.example.marsphotos.ui.theme.MarsPhotosTheme
 
 @Composable
-fun HomeScreen(
-    marsUiState: String, modifier: Modifier = Modifier
-) {
+fun HomeScreen(marsUiState: String, modifier: Modifier = Modifier) {
     ResultScreen(marsUiState, modifier)
 }
-
 /**
  * ResultScreen displaying number of photos retrieved.
  */
