@@ -20,13 +20,14 @@ private val retrofit = Retrofit.Builder()
 
 // 4. Define an interface - MarsApiService that defines how Retrofit talks to the web server
 // using HTTP requests. Add getPhotos() to get the response string from the web service.
-// Use @GET annotation to tell Retrofit that this is a GET request and specify an endpoint
-// for that web service method. The endpoint is /photos.
+// Use @GET annotation tells Retrofit - GET request and specify an endpoint. The endpoint is /photos.
 //When the getPhotos() method is invoked, Retrofit appends the endpoint photos to the base URL—
 // which you defined in the Retrofit builder—used to start the request.
 interface MarsApiService {
     @GET("photos")
-    fun getPhotos()
+    //getPhotos() = suspend function to make it asynchronous and not block the calling thread.
+    // You call this function from inside a viewModelScope.
+    suspend fun getPhotos(): String
 }
 
 //5.In Kotlin, object declarations are used to declare singleton objects.
@@ -36,7 +37,7 @@ interface MarsApiService {
 //define a public object - MarsApi to initialize the Retrofit service.
 // This object is the public singleton object that the rest of the app can access.
 object MarsApi {
-    //6. Add a lazily initialized retrofit object property named retrofitService type MarsApiService.
+    //6. Add a lazily initialized retrofit object property = retrofitService of type MarsApiService.
     // You make this lazy initialization to make sure it is initialized at its first usage.
     //"lazy initialization" when object creation is purposely delayed, until you actually need that object, to avoid unnecessary computation or use of other computing resources
     val retrofitService: MarsApiService by lazy {
