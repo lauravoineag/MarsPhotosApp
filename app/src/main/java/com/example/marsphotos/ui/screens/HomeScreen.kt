@@ -15,7 +15,11 @@
  */
 package com.example.marsphotos.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,14 +28,53 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.marsphotos.R
 import com.example.marsphotos.ui.theme.MarsPhotosTheme
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun HomeScreen(marsUiState: String, modifier: Modifier = Modifier) {
-    ResultScreen(marsUiState, modifier)
+fun HomeScreen(marsUiState: MarsViewModel.MarsUiState, modifier: Modifier = Modifier) {
+    //11 Remove - ResultScreen(marsUiState, modifier) when expression on the marsUiState.
+// If the marsUiState is MarsUiState.Success, call ResultScreen & pass in marsUiState.photos.
+    //Inside the when block, add checks for MarsUiState.Loading and MarsUiState.Error.
+    when (marsUiState) {
+        is MarsViewModel.MarsUiState.Loading  -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is MarsViewModel.MarsUiState.Success -> ResultScreen(
+            marsUiState.photos, modifier = modifier.fillMaxWidth()
+        )
+        is MarsViewModel.MarsUiState.Error -> ErrorScreen( modifier = modifier.fillMaxSize())
+    }
 }
-/**
- * ResultScreen displaying number of photos retrieved.
- */
+//12.LoadingScreen composable function to display the loading animation.
+// The loading_img drawable resource is included in the starter code.
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(R.drawable.loading_img),
+        contentDescription = stringResource(R.string.loading)
+    )
+}
+
+//13 Error screen
+@Composable
+fun ErrorScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_connection_error), contentDescription = ""
+        )
+        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
+    }
+}
+
+
+//ResultScreen displaying number of photos retrieved.
 @Composable
 fun ResultScreen(photos: String, modifier: Modifier = Modifier) {
     Box(
