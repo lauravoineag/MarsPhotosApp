@@ -20,31 +20,35 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.marsphotos.R
 import com.example.marsphotos.ui.theme.MarsPhotosTheme
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 
-@Composable
-fun HomeScreen(marsUiState: MarsViewModel.MarsUiState, modifier: Modifier = Modifier) {
-    //11 Remove - ResultScreen(marsUiState, modifier) when expression on the marsUiState.
+
+//11 Remove - ResultScreen(marsUiState, modifier) when expression on the marsUiState.
 // If the marsUiState is MarsUiState.Success, call ResultScreen & pass in marsUiState.photos.
-    //Inside the when block, add checks for MarsUiState.Loading and MarsUiState.Error.
+//Inside the when block, add checks for MarsUiState.Loading and MarsUiState.Error.
+@Composable
+fun HomeScreen(
+    marsUiState: MarsUiState, modifier: Modifier = Modifier
+) {
     when (marsUiState) {
-        is MarsViewModel.MarsUiState.Loading  -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is MarsViewModel.MarsUiState.Success -> ResultScreen(
+        is MarsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is MarsUiState.Success -> ResultScreen(
             marsUiState.photos, modifier = modifier.fillMaxWidth()
         )
-        is MarsViewModel.MarsUiState.Error -> ErrorScreen( modifier = modifier.fillMaxSize())
+
+        is MarsUiState.Error -> ErrorScreen(modifier = modifier.fillMaxSize())
     }
 }
 //12.LoadingScreen composable function to display the loading animation.
@@ -87,8 +91,26 @@ fun ResultScreen(photos: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun ResultScreenPreview() {
+fun LoadingScreenPreview() {
     MarsPhotosTheme {
-        ResultScreen(stringResource(R.string.placeholder_result))
+        LoadingScreen()
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun ErrorScreenPreview() {
+    MarsPhotosTheme {
+        ErrorScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PhotosGridScreenPreview() {
+    MarsPhotosTheme {
+        ResultScreen(stringResource(R.string.placeholder_success))
+    }
+}
+
+

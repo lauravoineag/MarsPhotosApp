@@ -21,8 +21,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.marsphotos.network.MarsApi
+import com.example.marsphotos.model.MarsPhoto
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.io.IOException
+
+//8.A sealed interface makes it easy to manage state by limiting the possible values -
+//restrict marsUiState web response to 3 states (data class objects): loading, success, and error,
+sealed interface MarsUiState {
+    data class Success(val photos: String) : MarsUiState //store data add parameter
+    object Loading : MarsUiState// object- don't need to set new data and create new objects
+    object Error : MarsUiState//object - don't need to set new data and create new objects
+}
 
 class MarsViewModel : ViewModel() {
         /** The mutable State that stores the status of the most recent request
@@ -31,20 +41,8 @@ class MarsViewModel : ViewModel() {
         var marsUiState: MarsUiState by mutableStateOf(MarsUiState.Loading)
             private set
 
-    //8.A sealed interface makes it easy to manage state by limiting the possible values -
-    //restrict marsUiState web response to 3 states (data class objects): loading, success, and error,
-        sealed interface MarsUiState {
-            data class Success(val photos:String) : MarsUiState //store data add parameter
-            object Loading : MarsUiState// object- don't need to set new data and create new objects
-            object Error : MarsUiState//object - don't need to set new data and create new objects
-        }
-
-        /**
-         * Call getMarsPhotos() on init so we can display status immediately.
-         */
-        init {
-            getMarsPhotos()
-        }
+        //Call getMarsPhotos() on init so we can display status immediately.
+        init { getMarsPhotos() }
 
         /**
          * Gets Mars photos information from the Mars API Retrofit service and updates the
@@ -55,10 +53,16 @@ class MarsViewModel : ViewModel() {
         //7. launch the coroutine u.launchsing viewModelScope
         // A viewModelScope is the built-in coroutine scope defined for each ViewModel in your app. Any coroutine launched in this scope is automatically canceled if the ViewModel is cleared.
         // You can use viewModelScope to launch the coroutine and make the web service request in the background. viewModelScope belongs to the ViewModel, the request continues even if the app goes through a configuration change.
-        private fun getMarsPhotos() { viewModelScope.launch {
-            try { //7. exception - if no internet connection
+        private fun getMarsPhotos() {
+            viewModelScope.launch {
+                marsUiState = MarsUiState.Loading
+                try {
+                    //7. exception - if no internet connection
+                //18.In the getMarsPhotos() method, listResult is a List<MarsPhoto> and not a String anymore
                 val listResult = MarsApi.retrofitService.getPhotos()//use the singleton object MarsApi to call the getPhotos() method from the retrofitService interface
-                marsUiState = MarsUiState.Success(listResult)//10. Assign the result just received from the backend server to the marsUiState
-            }catch (e:IOException){marsUiState = MarsUiState.Error} //11
+                marsUiState = MarsUiState.Success("Success: ${listResult.size} Mars photos retrieved")//10. Assign the result just received from the backend server to the marsUiState
+            }catch (e:IOException) {marsUiState = MarsUiState.Error}
+                catch (e: HttpException){marsUiState = MarsUiState.Error}
+            //11
         }}
     }
